@@ -1,6 +1,7 @@
 {
 	"name": "react-dom-event-hooks",
 	"version": "1.0.0",
+	"license": "MIT",
 	"author": {
 		"name": "Mondemen"
 	},
@@ -9,7 +10,7 @@
 	"main": "./dist/index.umd.cjs",
 	"types": "dist/index.d.ts",
 	"repository": {
-		"url": "https://github.com/Mondemen/react-dom-event-hooks"
+		"url": "git+https://github.com/Mondemen/react-dom-event-hooks.git"
 	},
 	"scripts": {
 		"dev": "vite",
@@ -21,18 +22,17 @@
 	"sideEffects": [
 		"**/*.css"
 	],
-	"exports":
-	{
+	"exports": {
 		".": {
+			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js",
-			"require": "./dist/index.umd.cjs",
-			"types": "./dist/index.d.ts"
+			"require": "./dist/index.umd.cjs"
 		}
 	},
 	"peerDependencies": {
 		"react": ">=18",
 		"react-dom": ">=18"
-  	},
+	},
 	"dependencies": {
 		"react": "^19.2.1",
 		"react-dom": "^19.2.1"
