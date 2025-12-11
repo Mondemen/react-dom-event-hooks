@@ -1,0 +1,8 @@
+src
+lib
+public
+*.tgz
+*.html
+tsconfig*
+*.config.ts
+*.config.js
