@@ -1,10 +1,16 @@
 {
 	"name": "react-dom-event-hooks",
 	"version": "1.0.0",
+	"author": {
+		"name": "Mondemen"
+	},
 	"type": "module",
 	"module": "./dist/index.js",
 	"main": "./dist/index.umd.cjs",
 	"types": "dist/index.d.ts",
+	"repository": {
+		"url": "https://github.com/Mondemen/react-dom-event-hooks"
+	},
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc --p ./tsconfig.build.json && vite build",

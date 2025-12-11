@@ -1,3 +1,4 @@
 node_modules
 dist
 tsconfig.tsbuildinfo
+react-dom-event-hooks-*.tgz
