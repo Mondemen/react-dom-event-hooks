@@ -8,8 +8,8 @@ export default defineConfig(
 [
 	globalIgnores(["dist/*"]),
 	pluginJs.configs.recommended,
-	...tseslint.configs.recommended,
-	reactHooks.configs["recommended-latest"],
+	tseslint.configs.recommended,
+	reactHooks.configs.flat.recommended,
 	{
 		languageOptions:
 		{
