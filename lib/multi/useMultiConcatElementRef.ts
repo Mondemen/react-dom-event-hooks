@@ -25,7 +25,7 @@ export function useMultiConcatElementRef<T extends HTMLElement | SVGElement = HT
 			cleanupMulti?.();
 			cleanup.forEach(cleanup => cleanup?.());
 		})
-	}, [callbacks, saveMultiRef]);
+	}, [...callbacks, saveMultiRef]); // eslint-disable-line react-hooks/exhaustive-deps, react-hooks/use-memo
 
 	return (useMemo<MultiElementRefObject<T>>(() =>
 	({

@@ -25,7 +25,7 @@ export function useConcatElementRef<T extends HTMLElement | SVGElement = HTMLEle
 			ref.current = null;
 			cleanup.forEach(cleanup => cleanup?.());
 		})
-	}, [callbacks]);
+	}, callbacks); // eslint-disable-line react-hooks/exhaustive-deps, react-hooks/use-memo
 
 	return (useMemo<ElementRefObject<T>>(() =>
 	({
