@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useEffectEvent, useRef } from "react";
 import { useMultiElementRef, type MultiElementRefCallback } from "./useMultiElementRef";
 
 export type UseMultiResizeObserverCallback<T extends HTMLElement | SVGElement = HTMLElement> = (entries: ResizeObserverEntry[], refs: Map<string, T>, observer: ResizeObserver) => void
 export function useMultiResizeObserver<T extends HTMLElement | SVGElement = HTMLElement>(callback: UseMultiResizeObserverCallback<T>, options?: ResizeObserverOptions, keyName?: string)
 {
 	const observerRef = useRef<ResizeObserver>(null);
+	const eventCallback = useEffectEvent(callback);
 	const refStore = useMultiElementRef(useCallback<MultiElementRefCallback<T>>((name, ref, refs) =>
 	{
 		if (refs.has(name))
@@ -17,7 +18,7 @@ export function useMultiResizeObserver<T extends HTMLElement | SVGElement = HTML
 	{
 		if (observerRef.current)
 			observerRef.current?.disconnect();
-		observerRef.current = new ResizeObserver((entries, observer) => callback(entries, refStore.ref.current, observer));
+		observerRef.current = new ResizeObserver((entries, observer) => eventCallback(entries, refStore.ref.current, observer));
 		refStore.ref.current.forEach(ref => observerRef.current?.observe(ref, options));
 		return (() =>
 		{
@@ -25,7 +26,7 @@ export function useMultiResizeObserver<T extends HTMLElement | SVGElement = HTML
 				observerRef.current?.disconnect();
 			observerRef.current = null;
 		});
-	}, [callback, options, refStore.ref]);
+	}, [options, refStore.ref]);
 
 	return (refStore);
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type RefCallback } from "react";
+import { useCallback, useEffect, useEffectEvent, useMemo, useRef, useState, type RefCallback } from "react";
 import { useElementRef, type ElementRefCallback, type ElementRefObject } from "./useElementRef";
 
 export type UseIntersectionObserverCallback<T extends HTMLElement | SVGElement = HTMLElement> = (entries: IntersectionObserverEntry[], ref: T, observer: IntersectionObserver) => void;
@@ -13,6 +13,7 @@ export interface IntersectionObserverObject<T extends HTMLElement | SVGElement =
 export function useIntersectionObserver<T extends HTMLElement | SVGElement = HTMLElement>(callback: UseIntersectionObserverCallback<T>, options?: UseIntersectionObserverOptions)
 {
 	const observerRef = useRef<IntersectionObserver>(null);
+	const eventCallback = useEffectEvent(callback);
 	const refStore = useElementRef(useCallback<ElementRefCallback<T>>(ref =>
 	{
 		if (ref)
@@ -30,7 +31,7 @@ export function useIntersectionObserver<T extends HTMLElement | SVGElement = HTM
 		observerRef.current = new IntersectionObserver((entries, observer) =>
 		{
 			if (refStore.ref.current)
-				callback(entries, refStore.ref.current, observer);
+				eventCallback(entries, refStore.ref.current, observer);
 		}, {...options, root: rootRef});
 		if (refStore.ref.current)
 			observerRef.current?.observe(refStore.ref.current);
@@ -40,7 +41,7 @@ export function useIntersectionObserver<T extends HTMLElement | SVGElement = HTM
 				observerRef.current?.disconnect();
 			observerRef.current = null;
 		});
-	}, [callback, options, refStore.ref, rootRef]);
+	}, [options, refStore.ref, rootRef]);
 
 	return (useMemo<IntersectionObserverObject<T>>(() =>
 	({

@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useEffectEvent, useRef } from "react";
 import { useElementRef, type ElementRefCallback } from "./useElementRef";
 
 export type UseResizeObserverCallback<T extends HTMLElement | SVGElement = HTMLElement> = (entries: ResizeObserverEntry[], ref: T, observer: ResizeObserver) => void
 export function useResizeObserver<T extends HTMLElement | SVGElement = HTMLElement>(callback: UseResizeObserverCallback<T>, options?: ResizeObserverOptions)
 {
 	const observerRef = useRef<ResizeObserver>(null);
+	const eventCallback = useEffectEvent(callback);
 	const refStore = useElementRef(useCallback<ElementRefCallback<T>>((ref) =>
 	{
 		if (ref)
@@ -20,7 +21,7 @@ export function useResizeObserver<T extends HTMLElement | SVGElement = HTMLEleme
 		observerRef.current = new ResizeObserver((entries, observer) =>
 		{
 			if (refStore.ref.current)
-				callback(entries, refStore.ref.current, observer);
+				eventCallback(entries, refStore.ref.current, observer);
 		});
 		if (refStore.ref.current)
 			observerRef.current?.observe(refStore.ref.current, options);
@@ -30,7 +31,7 @@ export function useResizeObserver<T extends HTMLElement | SVGElement = HTMLEleme
 				observerRef.current?.disconnect();
 			observerRef.current = null;
 		});
-	}, [callback, options, refStore.ref]);
+	}, [options, refStore.ref]);
 
 	return (refStore);
 }

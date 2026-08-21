@@ -11,7 +11,9 @@ export interface ElementRefObject<T extends HTMLElement | SVGElement = HTMLEleme
 	ref: RefObject<T | null>
 }
 
-export function useElementRef<T extends HTMLElement | SVGElement = HTMLElement | SVGElement>(callback: ElementRefCallback<T>)
+export function useElementRef<T extends HTMLElement | SVGElement = HTMLElement | SVGElement>(): ElementRefObject<T>;
+export function useElementRef<T extends HTMLElement | SVGElement = HTMLElement | SVGElement>(callback: ElementRefCallback<T>): ElementRefObject<T>;
+export function useElementRef<T extends HTMLElement | SVGElement = HTMLElement | SVGElement>(callback?: ElementRefCallback<T>)
 {
 	const ref = useRef<T>(null);
 	const saveRef = useCallback<RefCallback<T>>((newRef) =>

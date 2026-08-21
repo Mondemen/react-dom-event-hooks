@@ -15,6 +15,10 @@ export default defineConfig(
 		{
 			globals: globals.node
 		},
+		settings:
+		{
+			"react-hooks": {additionalEffectHooks: "(useIsomorphicLayoutEffect)"}
+		},
 		rules:
 		{
 			"@typescript-eslint/ban-ts-comment": "off",

@@ -1,25 +1,32 @@
-import { useCallback, useEffect } from "react";
-import { useElementRef, type ElementRefCallback } from "./useElementRef";
+import { useCallback, useEffectEvent, useMemo, useRef, type RefCallback } from "react";
+import { useIsomorphicLayoutEffect } from "../utils";
+import { type ElementRefObject } from "./useElementRef";
 
 export type UseElementEventListenerCallback<K extends keyof HTMLElementEventMap> = (this: HTMLElement, event: HTMLElementEventMap[K], ref: HTMLElement) => any;
 export function useElementEventListener<K extends keyof HTMLElementEventMap = keyof HTMLElementEventMap>(type: K, listener: UseElementEventListenerCallback<K>, options?: boolean | AddEventListenerOptions)
 {
-	const ref = useElementRef(useCallback<ElementRefCallback<HTMLElement>>(ref =>
+	// eslint-disable-next-line react-hooks/unsupported-syntax
+	const eventListener = useEffectEvent(function (this: HTMLElement, event: HTMLElementEventMap[K])
 	{
-		// eslint-disable-next-line react-hooks/unsupported-syntax
-		function callback(this: HTMLElement, event: HTMLElementEventMap[K]) {listener.call(this, event, ref)}
-
-		ref.addEventListener(type, callback, options);
-		return (() => ref.removeEventListener(type, callback, options));
-	}, [listener, options, type]));
-
-	useEffect(() =>
+		if (ref.current)
+			listener.call(this, event, ref.current);
+	});
+	const ref = useRef<HTMLElement>(null);
+	const saveRef = useCallback<RefCallback<HTMLElement>>((newRef) =>
 	{
-		function callback(this: HTMLElement, event: HTMLElementEventMap[K]) {listener.call(this, event, this)}
+		ref.current = newRef;
+		return (() => {ref.current = null});
+	}, []);
 
-		ref.ref.current?.addEventListener(type, callback, options);
-		return (() => ref.ref.current?.removeEventListener(type, callback, options));
-	}, [listener, options, ref.ref, type]);
+	useIsomorphicLayoutEffect(() =>
+	{
+		ref.current?.addEventListener(type, eventListener, options);
+		return (() => ref.current?.removeEventListener(type, eventListener, options));
+	}, [options, type]);
 
-	return (ref);
+	return (useMemo<ElementRefObject<HTMLElement>>(() =>
+	({
+		saveRef,
+		ref
+	}), [saveRef]));
 }

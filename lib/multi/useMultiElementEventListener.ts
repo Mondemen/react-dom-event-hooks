@@ -1,25 +1,42 @@
-import { useCallback, useEffect } from "react";
-import { useMultiElementRef, type MultiElementRefCallback } from "./useMultiElementRef";
+import { useCallback, useEffectEvent, useMemo, useRef, type RefCallback } from "react";
+import { useIsomorphicLayoutEffect } from "../utils";
+import type { MultiElementRefObject } from "./useMultiElementRef";
 
 export type UseMultiElementEventListenerCallback<K extends keyof HTMLElementEventMap> = (this: HTMLElement, event: HTMLElementEventMap[K], ref: HTMLElement, refs: Map<string, HTMLElement>) => any
 export function useMultiElementEventListener<K extends keyof HTMLElementEventMap = keyof HTMLElementEventMap>(type: K, listener: UseMultiElementEventListenerCallback<K>, options?: boolean | AddEventListenerOptions, keyName?: string)
 {
-	const refStore = useMultiElementRef(useCallback<MultiElementRefCallback<HTMLElement>>((_, ref, refs) =>
+	const eventListener = useEffectEvent((refObject: HTMLElement) =>
 	{
 		// eslint-disable-next-line react-hooks/unsupported-syntax
-		function callback(this: HTMLElement, event: HTMLElementEventMap[K]) {listener.call(this, event, ref, refs)}
-
-		ref.addEventListener(type, callback, options);
-		return (() => ref.removeEventListener(type, callback, options));
-	}, [listener, options, type]), keyName);
-
-	useEffect(() =>
+		return (function (this: HTMLElement, event: HTMLElementEventMap[K])
+		{
+			if (ref.current)
+				listener.call(this, event, refObject, ref.current);
+		})
+	});
+	const ref = useRef<Map<string, HTMLElement>>(new Map());
+	const getElement = useCallback((key?: string) => ref.current.get(key ?? "") ?? null, []);
+	const saveRef = useCallback<RefCallback<HTMLElement>>((newRef) =>
 	{
-		function callback(this: HTMLElement, event: HTMLElementEventMap[K]) {listener.call(this, event, this, refStore.ref.current)}
+		let key = newRef?.dataset[keyName ?? "key"] ?? "default";
 
-		refStore.ref.current.forEach(ref => ref.addEventListener(type, callback, options));
-		return (() => refStore.ref.current.forEach(ref => ref.removeEventListener(type, callback, options)));
-	}, [listener, options, refStore.ref, type]);
+		if (newRef)
+			ref.current.set(key, newRef);
+		return (() => {ref.current.delete(key)});
+	}, [keyName]);
 
-	return (refStore);
+	useIsomorphicLayoutEffect(() =>
+	{
+		const refStore = ref.current;
+
+		refStore.forEach(ref => ref.addEventListener(type, eventListener(ref), options));
+		return (() => refStore.forEach(ref => ref.removeEventListener(type, eventListener(ref), options)));
+	}, [options, type]);
+
+	return (useMemo<MultiElementRefObject<HTMLElement>>(() =>
+	({
+		saveRef,
+		getElement,
+		ref
+	}), [getElement, saveRef]));
 }

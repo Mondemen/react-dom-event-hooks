@@ -9,7 +9,9 @@ export interface MultiElementRefObject<T extends HTMLElement | SVGElement = HTML
 	getElement: (key: string) => T | null
 }
 
-export function useMultiElementRef<T extends HTMLElement | SVGElement = HTMLElement | SVGElement>(callback: MultiElementRefCallback<T>, keyName?: string)
+export function useMultiElementRef<T extends HTMLElement | SVGElement = HTMLElement | SVGElement>(): MultiElementRefObject<T>;
+export function useMultiElementRef<T extends HTMLElement | SVGElement = HTMLElement | SVGElement>(callback: MultiElementRefCallback<T>, keyName?: string): MultiElementRefObject<T>;
+export function useMultiElementRef<T extends HTMLElement | SVGElement = HTMLElement | SVGElement>(callback?: MultiElementRefCallback<T>, keyName?: string)
 {
 	const ref = useRef<Map<string, T>>(new Map());
 	const getElement = useCallback((key?: string) => ref.current.get(key ?? "") ?? null, []);
