@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useEffectEvent, useMemo, useRef, useState, type RefCallback } from "react";
+import { useCallback, useEffectEvent, useMemo, useRef, useState, type RefCallback } from "react";
+import { useIsomorphicLayoutEffect } from "../utils";
 import { useElementRef, type ElementRefCallback, type ElementRefObject } from "./useElementRef";
 
 export type UseIntersectionObserverCallback<T extends HTMLElement | SVGElement = HTMLElement> = (entries: IntersectionObserverEntry[], ref: T, observer: IntersectionObserver) => void;
@@ -24,7 +25,7 @@ export function useIntersectionObserver<T extends HTMLElement | SVGElement = HTM
 	const [rootRef, setRootRef] = useState<T | null>(null);
 	const saveRootRef = useCallback<RefCallback<T>>(ref => setRootRef(ref), []);
 
-	useEffect(() =>
+	useIsomorphicLayoutEffect(() =>
 	{
 		if (observerRef.current)
 			observerRef.current?.disconnect();

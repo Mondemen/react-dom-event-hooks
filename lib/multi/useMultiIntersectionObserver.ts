@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useEffectEvent, useMemo, useRef, useState, type RefCallback } from "react";
+import { useCallback, useEffectEvent, useMemo, useRef, useState, type RefCallback } from "react";
+import { useIsomorphicLayoutEffect } from "../utils";
 import { useMultiElementRef, type MultiElementRefCallback, type MultiElementRefObject } from "./useMultiElementRef";
 
 export type UseMultiIntersectionObserverCallback<T extends HTMLElement | SVGElement = HTMLElement> = (entries: IntersectionObserverEntry[], refs: Map<string, T>, observer: IntersectionObserver) => void;
@@ -24,7 +25,7 @@ export function useMultiIntersectionObserver<T extends HTMLElement | SVGElement 
 	const [rootRef, setRootRef] = useState<T | null>(null);
 	const saveRootRef = useCallback<RefCallback<T>>(ref => setRootRef(ref), []);
 
-	useEffect(() =>
+	useIsomorphicLayoutEffect(() =>
 	{
 		if (observerRef.current)
 			observerRef.current?.disconnect();

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useEffectEvent, useRef } from "react";
+import { useCallback, useEffectEvent, useRef } from "react";
+import { useIsomorphicLayoutEffect } from "../utils";
 import { useElementRef, type ElementRefCallback } from "./useElementRef";
 
 export type UseResizeObserverCallback<T extends HTMLElement | SVGElement = HTMLElement> = (entries: ResizeObserverEntry[], ref: T, observer: ResizeObserver) => void
@@ -14,7 +15,7 @@ export function useResizeObserver<T extends HTMLElement | SVGElement = HTMLEleme
 		return (() => observerRef.current?.unobserve(ref));
 	}, [options]));
 
-	useEffect(() =>
+	useIsomorphicLayoutEffect(() =>
 	{
 		if (observerRef.current)
 			observerRef.current?.disconnect();

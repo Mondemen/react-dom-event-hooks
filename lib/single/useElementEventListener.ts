@@ -5,7 +5,6 @@ import { type ElementRefObject } from "./useElementRef";
 export type UseElementEventListenerCallback<K extends keyof HTMLElementEventMap> = (this: HTMLElement, event: HTMLElementEventMap[K], ref: HTMLElement) => any;
 export function useElementEventListener<K extends keyof HTMLElementEventMap = keyof HTMLElementEventMap>(type: K, listener: UseElementEventListenerCallback<K>, options?: boolean | AddEventListenerOptions)
 {
-	// eslint-disable-next-line react-hooks/unsupported-syntax
 	const eventListener = useEffectEvent(function (this: HTMLElement, event: HTMLElementEventMap[K])
 	{
 		if (ref.current)

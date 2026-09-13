@@ -7,7 +7,6 @@ export function useMultiElementEventListener<K extends keyof HTMLElementEventMap
 {
 	const eventListener = useEffectEvent((refObject: HTMLElement) =>
 	{
-		// eslint-disable-next-line react-hooks/unsupported-syntax
 		return (function (this: HTMLElement, event: HTMLElementEventMap[K])
 		{
 			if (ref.current)
