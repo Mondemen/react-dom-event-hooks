@@ -1,7 +1,7 @@
 import { useCallback, useMemo, type Ref, type RefCallback } from "react";
 import { useMultiElementRef, type MultiElementRefObject } from "./useMultiElementRef";
 
-export function useMultiConcatElementRef<T extends HTMLElement | SVGElement = HTMLElement | SVGElement>(...callbacks: (MultiElementRefObject<T> | Ref<T>)[])
+export function useMultiConcatElementRef<T extends HTMLElement | SVGElement = HTMLElement | SVGElement>(...callbacks: (MultiElementRefObject<T> | Ref<T> | undefined)[])
 {
 	const {ref, saveRef: saveMultiRef, getElement} = useMultiElementRef<T>(useCallback(() => {}, []));
 	const saveRef = useCallback<RefCallback<T>>((newRef) =>

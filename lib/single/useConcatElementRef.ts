@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, type Ref, type RefCallback } from "react";
 import type { ElementRefObject } from "./useElementRef";
 
-export function useConcatElementRef<T extends HTMLElement | SVGElement = HTMLElement | SVGElement>(...callbacks: (ElementRefObject<T> | Ref<T>)[])
+export function useConcatElementRef<T extends HTMLElement | SVGElement = HTMLElement | SVGElement>(...callbacks: (ElementRefObject<T> | Ref<T> | undefined)[])
 {
 	const ref = useRef<T | null>(null);
 	const saveRef = useCallback<RefCallback<T>>((newRef) =>
